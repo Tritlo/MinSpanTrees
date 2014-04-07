@@ -13,9 +13,8 @@ class TreeAdjLi(object):
         self.T = [set() for _ in range(numVertices)]
         for (w,u,v) in MST:
             self.add(u,v)
-        #self.droppedComponents = dict()
-        #self.vertices = set(range(len(self.T)))
-        #self.ranks = [len(self.T[u]) for u in range(numVertices)]
+        self.droppedComponents = dict()
+        self.vertices = set(range(len(self.T)))
         
 
     def drop(self,u,v):
@@ -74,32 +73,28 @@ class TreeAdjLi(object):
         self.add(du,dv)
         return component
 
-    def rank(self,v):
-        return self.ranks[v]
-
-    def compo(self,v,edgeToDrop):
+    def componentOfIfDropped(self,v,edgeToDrop):
         """
-        edge to drop is du,dv, and v is one of du or dv.
+        Use: c = componentOfIfDropped(v,edge)
+        Pre:edge to drop is du,dv, and v is one of du or dv.
+        Post: c is the component of v if the edge edgeToDrop is dropped from the tree
         """
-
-        (du,dv) = edgeToDrop
-        u = du if dv == v else dv
         #Memoize
         if (v,edgeToDrop) in self.droppedComponents:
             return self.droppedComponents[(v,edgeToDrop)]
 
-        components = []
+        (du,dv) = edgeToDrop
+        u = du if dv == v else dv
+        component = set([v])
         for nu in self.T[v]:
             if nu == u:
                 continue
             edge = (v,nu) if v < nu else (nu,v)
-            components.append(self.compo(nu,edge)) 
-        compv = set([v])
-        compv.update(*components)
-        compu = self.vertices - compv
+            component.update(self.componentOfIfDropped(nu,edge)) 
+        compu = self.vertices - component
         self.droppedComponents[(u,edgeToDrop)] = compu
-        self.droppedComponents[(v,edgeToDrop)] = compv
-        return compv
+        self.droppedComponents[(v,edgeToDrop)] = component
+        return component
         
         
             
@@ -114,8 +109,8 @@ class TreeAdjLi(object):
         components = []
         for (w,u,v) in edgeList:
             #edge = (u,v)
-            #compu = self.compo(u,edge)
-            #compv = self.compo(v,edge)
+            #compu = self.componentOfIfDropped(u,edge)
+            #compv = self.componentOfIfDropped(v,edge)
             #comp =  compu if len(compu) < len(compv) else compv
             comp = self._findSmallerComponent(u,v)
             components.append(comp)
