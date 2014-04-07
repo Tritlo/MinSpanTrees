@@ -68,3 +68,11 @@ class TreeAdjLi(object):
         component = self._bfsComponent(du,dv)
         self.add(du,dv)
         return component
+
+    def findSmallerComponents(self,edgeList):
+        #Naive version
+        components = []
+        for (w,u,v) in edgeList:
+            components.append(self.findSmallerComponent(u,v))
+        return components
+        

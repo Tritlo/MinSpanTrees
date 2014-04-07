@@ -17,9 +17,10 @@ print(totalW)
 out = []
 MSTAdjLi = TreeAdjLi(MST,numVertices)
 NonTreeEdgesAdjLi = makeAdjLi(numVertices,nonTreeEdges)
+ComponentsIfDropped = MSTAdjLi.findSmallerComponents(MST)
 for i in range(len(MST)):
     dw,du,dv = MST[i] #Dropped 
-    component = MSTAdjLi.findSmallerComponent(du,dv)
+    component = ComponentsIfDropped[i]
     nw,nu,nv = connectComponents(component,NonTreeEdgesAdjLi)
     newW = totalW-dw + nw
     out.append((du,dv, newW))
