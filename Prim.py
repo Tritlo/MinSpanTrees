@@ -16,6 +16,56 @@ def makeAdjLi(numVertices,edges):
         adjLi[v].add((w,u,v))
     return adjLi
 
+def findSmallerComponent(u,v,adjLi):
+    """
+    Use: component = _bfsComponent(u,v,adjLi)
+    Pre: u and v are nodes in the adacencyList adjLi
+    Post: component is the smaller component of the components
+         that contain u and v.
+    """
+
+    #This could be paralellized, but in practice it was slower :(
+    #We search from both ends, terminating
+    #When we reach the end of either.
+    componentContainingU, componentContainingV = set(),set()
+    #Unvistied u and v
+    unvisitedFromU,unvisitedFromV = set([u]), set([v])
+
+    # Do one round first
+    visitingFromCu = unvisitedFromU.pop()
+    if visitingFromCu not in componentContainingU:
+        unvisitedFromU.update(adjLi[visitingFromCu])
+        componentContainingU.add(visitingFromCu)
+
+    visitingFromCv = unvisitedFromV.pop()
+    if visitingFromCv not in componentContainingV:
+        unvisitedFromV.update(adjLi[visitingFromCv])
+        componentContainingV.add(visitingFromCv)
+
+    # We are checking what happens
+    # If (u,v) was not present.
+    unvisitedFromU.remove(v)
+    unvisitedFromV.remove(u)
+
+    while unvisitedFromU and unvisitedFromV:
+        visitingFromCu = unvisitedFromU.pop()
+        if visitingFromCu not in componentContainingU:
+            unvisitedFromU.update(adjLi[visitingFromCu])
+            componentContainingU.add(visitingFromCu)
+        visitingFromCv = unvisitedFromV.pop()
+        if visitingFromCv not in componentContainingV:
+            unvisitedFromV.update(adjLi[visitingFromCv])
+            componentContainingV.add(visitingFromCv)
+    return componentContainingU if unvisitedFromV else componentContainingV
+
+
+def makeNonWAdjLi(edgeList,numVertices):
+    adjLi = [set() for _ in range(numVertices)]
+    for (w,u,v) in edgeList:
+        adjLi[u].add(v)
+        adjLi[v].add(u)
+    return adjLi
+
 
 def findLegalMin(tree,edgesFromTree,edgesFromTreeSet,adjLi):
     """
