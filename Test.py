@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from Parser import readGraphFile
 from Prim import *
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
+from random import shuffle
 import sys
 
 
@@ -17,6 +18,7 @@ out = []
 MSTAdjLi = makeNonWAdjLi(MST,numVertices)
 NonTreeEdgesAdjLi = makeAdjLi(numVertices,nonTreeEdges)
 
+
 def minIfDropped(dwdudv):
     dw,du,dv = dwdudv[0],dwdudv[1],dwdudv[2] #Dropped 
     #component = findSmallerComponent(du,dv,MSTAdjLi.T)
@@ -25,7 +27,11 @@ def minIfDropped(dwdudv):
     newW = totalW-dw + nw
     return (du,dv,newW)
 
-with Pool(processes=16) as pool:
+# Shuffle array, so that the load is split
+# More evenly between the processes.
+shuffle(MST)
+
+with Pool(processes=cpu_count()) as pool:
     out = pool.map(minIfDropped,MST)
 
 #out = list(map(minIfDropped,MST))
