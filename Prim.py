@@ -158,9 +158,8 @@ def connectComponents(component,adjLi):
     mw,mu,mv  = float("inf"),0,0
     for t in component:
         for (w,u,v) in adjLi[t]:
-            if (u in component) != (v in component):
-                if w < mw:
-                    mw,mu,mv = w,u,v
+            if w < mw and (u in component) != (v in component):
+                mw,mu,mv = w,u,v
     return (mw,mu,mv) 
     
     
