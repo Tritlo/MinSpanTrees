@@ -155,15 +155,12 @@ def connectComponents(component,adjLi):
     Post: (w,u,v) is the edge with the least weight that connects the component component
         to a vertice not in the component
     """
-    edgesConnectedToComponent = []
+    mw,mu,mv  = float("inf"),0,0
     for t in component:
-        for edge in adjLi[t]:
-            heappush(edgesConnectedToComponent,edge) 
-    (w,u,v) = heappop(edgesConnectedToComponent)
-    while (u in component) == (v in component):
-        #(w,u,v) er minnsti hugsanlega loglegi
-        #leggur sem getur tengt samhengisthaettina
-        (w,u,v) = heappop(edgesConnectedToComponent)
-    return (w,u,v)
+        for (w,u,v) in adjLi[t]:
+            if (u in component) != (v in component):
+                if w < mw:
+                    mw,mu,mv = w,u,v
+    return (mw,mu,mv) 
     
     
