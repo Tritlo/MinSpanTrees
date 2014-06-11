@@ -148,18 +148,24 @@ def Prim(numVertices,edges):
         
 
 
-def connectComponents(component,adjLi):
+def connectComponents(component,adjLi,dw):
     """
-    Use: (w,u,v) = connectComponents(component,adjLi)
+    Use: (w,u,v) = connectComponents(component,adjLi,dw)
     Pre: component is a set that contains vertices from the adjacency list adjLi
-    Post: (w,u,v) is the edge with the least weight that connects the component component
-        to a vertice not in the component
+    Post: (w,u,v) is the edge with the least weight that connects the component component, with w >= dw.
+        to a vertex not in the component
     """
+    #Timaflaekja: O(N), thvi fjodli leggja er max n-1,
+    #svo total summa fjolda i adjLi er 2n-2
     mw,mu,mv  = float("inf"),0,0
     for t in component:
         for (w,u,v) in adjLi[t]:
-            if w < mw and (u in component) != (v in component):
-                mw,mu,mv = w,u,v
+            #(u+v-t) is u if u == t else v.
+            if w < mw:
+                if w > dw and ((u+v-t) not in component):
+                    mw,mu,mv = w,u,v
+                elif w == dw:
+                    return w,u,v
     return (mw,mu,mv) 
     
     
